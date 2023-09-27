@@ -1,0 +1,31 @@
+
+
+map:
+    tilemap
+    dimensions
+
+tiles:
+    location
+    material
+    passable
+    symbol
+
+walls:
+    location
+    material
+    passable
+    -transparent
+    symbol
+
+player:
+    location
+    material
+    passable
+    transparent
+    symbol
+
+system:
+    move
+    bump_into
+
+considering using vectors instead of unorderd maps, and apply a binary search system for components in a vector
