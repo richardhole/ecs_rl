@@ -7,6 +7,7 @@
 #include "../lib/Misc/Tile.h"
 
 int main(){
+    initscr();
     std::vector<int> entity;
     std::vector<Tile*> tiles;
     std::unordered_map<int, Passable*> can_be_passed_thru;

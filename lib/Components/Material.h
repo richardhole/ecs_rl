@@ -3,10 +3,13 @@
 
 enum class Material_Type{
     stone,
-    air
+    air,
+    grass
 };
 
-struct Material{
+struct Material
+{
+    Material(int id, Material_Type material_type);
     int id;
     Material_Type material_type;
 };
