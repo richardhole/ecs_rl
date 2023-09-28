@@ -2,7 +2,7 @@
 #define MOVE_H
 
 #include "../Components/Location.h"
-#include "../../Misc/Tilemap.h"
+#include "../Misc/Tilemap.h"
 #include "../Components/Passable.h"
 #include "Bump_Into.h"
 #include <unordered_map>
