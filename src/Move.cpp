@@ -1,9 +1,10 @@
-#include "../lib/Systems/Move.h"
+#include "Systems/Move.h"
 
-bool move(int id, std::unordered_map<int, Location*>* locations, std::unordered_map<int, Passable*>* can_be_passed_thru, Tilemap* tilemap, Direction dir){
+
+bool move(int id, Direction dir, std::unordered_map<int, Location*>* locations, std::unordered_map<int, Passable*>* can_it_be_passed_thru, Tilemap* tilemap){
     int temp_y = locations->at(id)->y;
     int temp_x = locations->at(id)->x;
-    int tile_id;
+    Tile* current_tile = tilemap->tiles_in_map[locations->at(id)->y * tilemap->width + locations->at(id)->x];
     switch(dir){
         case Direction::up:
             temp_y--;
@@ -18,40 +19,36 @@ bool move(int id, std::unordered_map<int, Location*>* locations, std::unordered_
             temp_x++;
         break;
     }
-    if( temp_y < 0                              ||  //making sure entity stays within bounds
-        temp_y >= tilemap->dimensions.height     ||
-        temp_x < 0                              ||
-        temp_x >= tilemap->dimensions.width)
+
+    //check to make sure entity doesn't go out of bounds
+
+    if(     temp_y < 0                      ||
+            temp_y >= tilemap->height       ||
+            temp_x < 0                      ||
+            temp_x >= tilemap->width)
+    {
+        return false;
+    }
+
+    //make sure new location is passable, needs cleaning up
+
+    bool bumped = false;
+    for(int i = 0; i < current_tile->entities_in_tile.size(); i++)
+    {
+        if(!can_it_be_passed_thru->at(current_tile->entities_in_tile[i])->passable)
+        {
+            bump_Into(id, current_tile->entities_in_tile[i]);
+            bumped = true;
+        }
+    }
+    if(bumped)
     {
         return false;
     }
     else
-    {   
-        std::vector<int> entities_in_new_loc;                
-                                //making sure entity doesn.'t enter unpassable location
-        for(auto it = locations->begin(); it != locations->end(); it++)
-        {
-            //will work on operator overloading to make this less messy
-            if(it->second->y == temp_y && it->second->x == temp_x)
-            {
-                entities_in_new_loc.push_back(it->first);
-            }
-        }
-        bool bumped = false;
-        for(int i = 0; i < entities_in_new_loc.size(); i++)
-        {
-            if(!can_be_passed_thru->at(entities_in_new_loc[i])->passable)
-            {
-                bump_Into(id, can_be_passed_thru->at(entities_in_new_loc[i])->id);
-                bumped = true;
-            }
-        }
-        if(bumped) return false;
-        //change entity new location
+    {
         locations->at(id)->y = temp_y;
         locations->at(id)->x = temp_x;
+        return true;
     }
-    return true;
 }
-
-//more complicated than it needs to be, will be using vector with each "tile" containing a separate vector for entities in that location.
